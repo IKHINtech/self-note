@@ -2,60 +2,72 @@ import React, { useEffect, useState } from "react";
 import Header from "./components/Header";
 import NoteInput from "./components/NoteInput";
 import { getInitialData } from "./utils/index";
-import NoteItem from "./components/NoteItem";
+import NoteList from "./components/NoteList";
 
 function App() {
+  // state
   const [notes, setNotes] = useState(getInitialData());
-  const [noteToDelete, setNoteToDelete] = useState(null);
   const [query, setQuery] = useState("");
-  const [activeNote, setActiveNote] = useState([]);
-  const [archiveNote, setArchiveNote] = useState([]);
+  const [originalNotes, setOriginalNotes] = useState([...notes]);
 
-  const deleteNote = () => {
+  const active = notes.filter((note) => note.archived !== true);
+  const archive = notes.filter((note) => note.archived === true);
+
+  // handler
+  const deleteNote = (note) => {
     const newNotes = [...notes];
-    const noteIndex = newNotes.findIndex((n) => n.id === noteToDelete.id);
+    const noteIndex = newNotes.findIndex((n) => n.id === note.id);
     newNotes.splice(noteIndex, 1);
     setNotes(newNotes);
   };
 
+  const setMark = (note) => {
+    const newNotes = [...notes];
+    const targetNote = newNotes.find((n) => n.id === note.id);
+    if (targetNote) {
+      targetNote.archived = !targetNote.archived;
+    }
+    setNotes(newNotes);
+  };
+  const searchNotes = () => {
+    const newNotes = [...originalNotes];
+    const filteredNotes = newNotes.filter((note) =>
+      note.title.toLowerCase().includes(query.toLowerCase())
+    );
+    setNotes(filteredNotes);
+  };
+
+  // hooks
   useEffect(() => {
-    const active = [];
-    const archive = [];
-    notes.forEach((note) => {
-      if (note.archived) {
-        archive.push(note);
-      } else {
-        active.push(note);
-      }
-    });
-    setActiveNote(active);
-    setArchiveNote(archive);
-  }, [notes]);
+    if (query !== "") {
+      searchNotes();
+    } else {
+      setNotes(originalNotes);
+    }
+  }, [query, originalNotes]);
+
   return (
     <>
-      <Header />
+      <Header query={query} setQuery={setQuery} />
       <div className="note-app__body">
-        <NoteInput />
-        <h2>Catatan Aktif</h2>
-        {activeNote.length !== 0 ? (
-          <div className="notes-list">
-            {activeNote.map((note) => (
-              <NoteItem key={note.id} note={note} />
-            ))}
-          </div>
-        ) : (
-          <p className="notes-list__empty-message">Tidak ada catatan</p>
-        )}
-        <h2>Arsip</h2>
-        {archiveNote.length !== 0 ? (
-          <div className="notes-list">
-            {archiveNote.map((note) => (
-              <NoteItem key={note.id} note={note} />
-            ))}
-          </div>
-        ) : (
-          <p className="notes-list__empty-message">Tidak ada catatan</p>
-        )}
+        {/* Form tambah note */}
+        <NoteInput setNotes={setNotes} notes={notes} />
+
+        {/* Note Aktif */}
+        <NoteList
+          onDelete={deleteNote}
+          onMark={setMark}
+          notes={active}
+          title={"Catatan Aktif"}
+        />
+
+        {/* Note Sudah Diarsipkan */}
+        <NoteList
+          onDelete={deleteNote}
+          onMark={setMark}
+          notes={archive}
+          title={"Arsip"}
+        />
       </div>
     </>
   );

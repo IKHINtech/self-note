@@ -1,6 +1,7 @@
 import { showFormattedDate } from "../utils/index";
 import React from "react";
-export default function NoteItem({ note }) {
+
+export default function NoteItem({ note, onMark, onDelete }) {
   return (
     <div className="note-item">
       <div className="note-item__content">
@@ -9,8 +10,16 @@ export default function NoteItem({ note }) {
         <p className="note-item__body">{note.body}</p>
       </div>
       <div className="note-item__action">
-        <button className="note-item__delete-button">Delete</button>
-        <button className="note-item__archive-button">
+        <button
+          className="note-item__delete-button"
+          onClick={() => onDelete(note)}
+        >
+          Delete
+        </button>
+        <button
+          className="note-item__archive-button"
+          onClick={() => onMark(note)}
+        >
           {note.archived ? "Pindahkan" : "Arsipkan"}
         </button>
       </div>
