@@ -6,8 +6,10 @@ export default function NoteInput({ setNotes, notes }) {
   const [titleLength, setTitleLength] = useState(0);
 
   const handleChangeTitle = (value) => {
-    setTitle(value);
-    setTitleLength(value.length);
+    if (value.length <= 50) {
+      setTitle(value);
+      setTitleLength(value.length);
+    }
   };
 
   const onAddNote = (e) => {
