@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function NoteInput({ setNotes, notes }) {
+export default function NoteInput({ setNotes, notes, setOriginalNotes }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [titleLength, setTitleLength] = useState(0);
@@ -27,6 +27,7 @@ export default function NoteInput({ setNotes, notes }) {
         createdAt: new Date(),
       };
       setNotes([...notes, note]);
+      setOriginalNotes([...notes, note]);
     }
   };
 

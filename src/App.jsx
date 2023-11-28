@@ -19,6 +19,7 @@ function App() {
     const noteIndex = newNotes.findIndex((n) => n.id === note.id);
     newNotes.splice(noteIndex, 1);
     setNotes(newNotes);
+    setOriginalNotes(newNotes);
   };
 
   const setMark = (note) => {
@@ -28,6 +29,7 @@ function App() {
       targetNote.archived = !targetNote.archived;
     }
     setNotes(newNotes);
+    setOriginalNotes(newNotes);
   };
   const searchNotes = () => {
     const newNotes = [...originalNotes];
@@ -51,7 +53,11 @@ function App() {
       <Header query={query} setQuery={setQuery} />
       <div className="note-app__body">
         {/* Form tambah note */}
-        <NoteInput setNotes={setNotes} notes={notes} />
+        <NoteInput
+          setNotes={setNotes}
+          notes={notes}
+          setOriginalNotes={setOriginalNotes}
+        />
 
         {/* Note Aktif */}
         <NoteList
