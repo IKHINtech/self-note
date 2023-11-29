@@ -4,7 +4,7 @@ export default function NoteList({ notes, title, onMark, onDelete }) {
   return (
     <>
       <h2>{title}</h2>
-      {notes.length !== 0 ? (
+      {notes.length ? (
         <div className="notes-list">
           {notes.map((note) => (
             <NoteItem

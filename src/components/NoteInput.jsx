@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 
-export default function NoteInput({ setNotes, notes, setOriginalNotes }) {
+export default function NoteInput({ setNotes, notes }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [titleLength, setTitleLength] = useState(0);
 
   const handleChangeTitle = (value) => {
-    if (value.length <= 50) {
-      setTitle(value);
-      setTitleLength(value.length);
-    }
+    setTitle(value.slice(0, 50));
+    setTitleLength(value.length);
   };
 
   const onAddNote = (e) => {
@@ -27,7 +25,6 @@ export default function NoteInput({ setNotes, notes, setOriginalNotes }) {
         createdAt: new Date(),
       };
       setNotes([...notes, note]);
-      setOriginalNotes([...notes, note]);
     }
   };
 

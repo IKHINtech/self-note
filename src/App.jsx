@@ -7,11 +7,14 @@ import NoteList from "./components/NoteList";
 function App() {
   // state
   const [notes, setNotes] = useState(getInitialData());
-  const [query, setQuery] = useState("");
-  const [originalNotes, setOriginalNotes] = useState([...notes]);
+  const [keyword, setKeyword] = useState("");
 
-  const active = notes.filter((note) => note.archived !== true);
-  const archive = notes.filter((note) => note.archived === true);
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  const activeNotes = filteredNotes.filter((note) => !note.archived);
+  const archivedNotes = filteredNotes.filter((note) => note.archived);
 
   // handler
   const deleteNote = (note) => {
@@ -19,7 +22,6 @@ function App() {
     const noteIndex = newNotes.findIndex((n) => n.id === note.id);
     newNotes.splice(noteIndex, 1);
     setNotes(newNotes);
-    setOriginalNotes(newNotes);
   };
 
   const setMark = (note) => {
@@ -29,41 +31,20 @@ function App() {
       targetNote.archived = !targetNote.archived;
     }
     setNotes(newNotes);
-    setOriginalNotes(newNotes);
   };
-  const searchNotes = () => {
-    const newNotes = [...originalNotes];
-    const filteredNotes = newNotes.filter((note) =>
-      note.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setNotes(filteredNotes);
-  };
-
-  // hooks
-  useEffect(() => {
-    if (query !== "") {
-      searchNotes();
-    } else {
-      setNotes(originalNotes);
-    }
-  }, [query, originalNotes]);
 
   return (
     <>
-      <Header query={query} setQuery={setQuery} />
+      <Header query={keyword} setQuery={setKeyword} />
       <div className="note-app__body">
         {/* Form tambah note */}
-        <NoteInput
-          setNotes={setNotes}
-          notes={notes}
-          setOriginalNotes={setOriginalNotes}
-        />
+        <NoteInput setNotes={setNotes} notes={notes} />
 
         {/* Note Aktif */}
         <NoteList
           onDelete={deleteNote}
           onMark={setMark}
-          notes={active}
+          notes={activeNotes}
           title={"Catatan Aktif"}
         />
 
@@ -71,7 +52,7 @@ function App() {
         <NoteList
           onDelete={deleteNote}
           onMark={setMark}
-          notes={archive}
+          notes={archivedNotes}
           title={"Arsip"}
         />
       </div>
